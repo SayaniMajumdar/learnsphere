@@ -176,7 +176,7 @@
 
 
 import { useState } from "react";
-import axios from "../api/api";
+import API from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 import GoogleLoginButton from "../components/GoogleLoginButton";
@@ -220,7 +220,7 @@ function Signup() {
     }
 
     try {
-      const res = await axios.post("api/auth/signup", form);
+      const res = await API.post("/api/auth/signup", form);
       alert(res.data.message);
       navigate("/login");
     } catch (err) {

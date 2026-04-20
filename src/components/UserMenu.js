@@ -47,16 +47,23 @@
 import { useState } from "react";
 import { MdPerson } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import API from "../api/api";
 
 function UserMenu() {
   const [open, setOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await API.post("/api/auth/logout");
+    } catch (err) {
+      console.error("Logout API failed:", err.response?.data || err);
+    } finally {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      navigate("/login");
+    }
   };
 
   return (
@@ -68,10 +75,10 @@ function UserMenu() {
           width: "42px",
           height: "42px",
           borderRadius: "50%",
-          background: "linear-gradient(135deg, #a855f7, #6366f1)",
+          background: "linear-gradient(135deg, #3b82f6, #2563eb)",
           cursor: "pointer",
-          boxShadow: "0 2px 8px rgba(99, 102, 241, 0.4)",
-          border: "2px solid rgba(255, 255, 255, 0.2)",
+          boxShadow: "0 2px 8px rgba(37, 99, 235, 0.35)",
+          border: "2px solid #dbeafe",
           transition: "transform 0.3s",
         }}
         onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
@@ -84,7 +91,7 @@ function UserMenu() {
             objectFit: "cover",
             borderRadius: " 50%"
           }}
-          color="#2c2c2cff"
+          color="#eff6ff"
         />
       </div>
 
@@ -95,12 +102,12 @@ function UserMenu() {
             position: "absolute",
             top: "55px",
             right: "0",
-            background: "rgba(15, 23, 42, 0.95)",
+            background: "rgba(255, 255, 255, 0.98)",
             borderRadius: "12px",
             padding: "8px",
             width: "200px",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.5)",
+            border: "1px solid #dbeafe",
+            boxShadow: "0 10px 25px -5px rgba(37, 99, 235, 0.18)",
             backdropFilter: "blur(12px)",
             zIndex: 100,
             display: "flex",
@@ -123,12 +130,12 @@ function UserMenu() {
                 padding: "10px 12px",
                 borderRadius: "8px",
                 cursor: "pointer",
-                color: "#f1f5f9",
+                color: "#1e3a8a",
                 fontSize: "14px",
                 fontWeight: "500",
                 transition: "background 0.2s",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)")}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "#eff6ff")}
               onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
             >
               {text}
@@ -146,7 +153,7 @@ function UserMenu() {
             left: 0,
             width: "100%",
             height: "100%",
-            background: "rgba(0, 0, 0, 0.6)",
+            background: "rgba(15, 23, 42, 0.2)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -156,19 +163,19 @@ function UserMenu() {
         >
           <div
             style={{
-              background: "rgba(15, 23, 42, 0.95)",
+              background: "rgba(255, 255, 255, 0.98)",
               padding: "24px",
               borderRadius: "16px",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.5)",
+              border: "1px solid #dbeafe",
+              boxShadow: "0 10px 25px -5px rgba(37, 99, 235, 0.18)",
               backdropFilter: "blur(12px)",
               textAlign: "center",
               width: "320px",
-              color: "#f1f5f9"
+              color: "#0f172a"
             }}
           >
             <h3 style={{ margin: "0 0 12px 0", fontSize: "20px", fontWeight: "600" }}>Confirm Logout</h3>
-            <p style={{ margin: "0 0 24px 0", fontSize: "14px", color: "#94a3b8" }}>
+            <p style={{ margin: "0 0 24px 0", fontSize: "14px", color: "#64748b" }}>
               Are you sure you want to log out of your account?
             </p>
             <div style={{ display: "flex", justifyContent: "space-between", gap: "12px" }}>
@@ -178,15 +185,15 @@ function UserMenu() {
                   flex: 1,
                   padding: "10px 16px",
                   borderRadius: "8px",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                  background: "transparent",
-                  color: "#f1f5f9",
+                  border: "1px solid #bfdbfe",
+                  background: "#ffffff",
+                  color: "#1e3a8a",
                   cursor: "pointer",
                   fontWeight: "600",
                   transition: "background 0.2s"
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "#eff6ff")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "#ffffff")}
               >
                 Cancel
               </button>

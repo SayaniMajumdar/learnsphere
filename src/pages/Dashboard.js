@@ -533,7 +533,7 @@ function Dashboard() {
       setNewClassDesc("");
       fetchClassrooms();
     } catch (err) {
-      alert(err.response?.data?.error || "Failed to create class");
+      alert(err.response?.data?.msg || err.response?.data?.error || "Failed to create class");
     }
   };
 
@@ -548,7 +548,7 @@ function Dashboard() {
       setJoinRoomKey("");
       fetchClassrooms();
     } catch (err) {
-      alert(err.response?.data?.error || "Failed to join class");
+      alert(err.response?.data?.msg || err.response?.data?.error || "Failed to join class");
     }
   };
 
@@ -558,7 +558,7 @@ function Dashboard() {
       await API.delete(`/api/classroom/delete/${id}`);
       fetchClassrooms();
     } catch (err) {
-      alert("Delete failed");
+      alert(err.response?.data?.msg || "Delete failed");
     }
   };
 
@@ -568,7 +568,7 @@ function Dashboard() {
       await API.delete(`/api/classroom/leave/${id}`);
       fetchClassrooms();
     } catch (err) {
-      alert("Leave failed");
+      alert(err.response?.data?.msg || "Leave failed");
     }
   };
 

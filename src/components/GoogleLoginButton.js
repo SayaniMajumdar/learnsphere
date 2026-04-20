@@ -1,6 +1,6 @@
 import React from "react";
 import { useGoogleLogin } from "@react-oauth/google";
-import axios from "../api/api";
+import API from "../api/api";
 import { useNavigate } from "react-router-dom";
 
 function GoogleLoginButton({ text, onSuccessPath = "/dashboard" }) {
@@ -9,7 +9,7 @@ function GoogleLoginButton({ text, onSuccessPath = "/dashboard" }) {
   const handleGoogleAuth = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        const res = await axios.post("api/auth/google", {
+        const res = await API.post("/api/auth/google_login", {
           token: tokenResponse.access_token
         });
         localStorage.setItem("access_token", res.data.access_token);

@@ -162,11 +162,11 @@
 
 
 import { useState } from "react";
-import axios from "../api/api";
+import API from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import GoogleLoginButton from "../components/GoogleLoginButton";
-import "../App.css"; // <--- EIKHANE EI LINE-TA ADD KORO
+import "../App.css";
 
 function Login() {
   const [form, setForm] = useState({
@@ -182,7 +182,7 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post("api/auth/login", form);
+      const res = await API.post("/api/auth/login", form);
       localStorage.setItem("access_token", res.data.access_token);
       localStorage.setItem("refresh_token", res.data.refresh_token);
       alert("Login successful");
@@ -208,7 +208,6 @@ function Login() {
           <input type="password" name="password" placeholder="Password" onChange={handleChange} />
         </div>
 
-        {/* Eikhane className="forgot-pass" add kora hoyeche */}
         <p className="forgot-pass">Forgot Password?</p>
 
         <button className="btn" onClick={handleLogin}>Log In</button>
