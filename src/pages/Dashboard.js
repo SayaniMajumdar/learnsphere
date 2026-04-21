@@ -575,7 +575,7 @@ function Dashboard() {
   return (
     <div className="dashboard">
       <div className="topbar">
-        <h1 className="title">CampusHub</h1>
+        <h1 className="title">LearnSphere</h1>
 
         <div className="actions">
           <button className="btn primary" onClick={() => setShowCreateModal(true)}>

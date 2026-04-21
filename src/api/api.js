@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const BACKEND_BASE_URL = "https://learnsphere-08mn.onrender.com";
+
 const API = axios.create({
-  baseURL: "https://learnsphere-08mn.onrender.com",
+  baseURL: BACKEND_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -32,7 +34,7 @@ API.interceptors.response.use(
 
       try {
         const refreshResponse = await axios.post(
-          "https://learnsphere-08mn.onrender.com/api/auth/refresh",
+          `${BACKEND_BASE_URL}/api/auth/refresh`,
           { refresh_token: refreshToken },
           {
             headers: { "Content-Type": "application/json" },

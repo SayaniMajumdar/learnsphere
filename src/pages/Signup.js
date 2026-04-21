@@ -187,37 +187,106 @@ function Signup() {
     email: "",
     password: ""
   });
+  const [errors, setErrors] = useState({
+    username: "",
+    email: "",
+    password: ""
+  });
 
   const navigate = useNavigate();
 
-  // ✅ Regex validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const usernameRegex = /^(?=(?:.*[A-Za-z]){3,})[A-Za-z_]+[0-9]*$/;
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
 
-  // ✅ Handle input change
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  // ✅ Signup function with validation
+  const validateUsername = (username) => {
+    if (!username) return "Name must contain at least 3 letters. Digits are allowed only at the end, and underscores (_) are allowed. No spaces are permitted";
+    if (username === "___") return "Name must contain at least 3 letters. Digits are allowed only at the end, and underscores (_) are allowed. No spaces are permitted";
+    if (!usernameRegex.test(username)) return "Name must contain at least 3 letters. Digits are allowed only at the end, and underscores (_) are allowed. No spaces are permitted.";
+    return "";
+  };
+
+  const validateEmailFormat = (email) => {
+    if (!email) return "Email is required";
+    if (!emailRegex.test(email)) return "Enter a valid email address";
+    return "";
+  };
+
+  const validatePassword = (password) => {
+    if (!password) return "Password is required";
+    if (!passwordRegex.test(password)) {
+      return "Password must be at least 6 characters and include a number";
+    }
+    return "";
+  };
+
+  const verifyEmailDeliverable = async (email) => {
+    try {
+      const res = await fetch(
+        `https://api.eva.pingutil.com/email?email=${encodeURIComponent(email)}`
+      );
+      if (!res.ok) return null;
+      const data = await res.json();
+      const deliverable = data?.data?.deliverable;
+      if (deliverable === false) return false;
+      if (deliverable === true) return true;
+      return null;
+    } catch (err) {
+      return null;
+    }
+  };
+
+  const checkEmailExists = async (email) => {
+    try {
+      const res = await API.post("/check-email", { email });
+      return res.data?.exists === true;
+    } catch (err) {
+      try {
+        const fallbackRes = await API.post("/api/auth/check-email", { email });
+        return fallbackRes.data?.exists === true;
+      } catch (fallbackErr) {
+        return false;
+      }
+    }
+  };
+
+  const validateBeforeSignup = async () => {
+    const nextErrors = {
+      username: validateUsername(form.username),
+      email: validateEmailFormat(form.email),
+      password: validatePassword(form.password)
+    };
+
+    if (nextErrors.email) {
+      setErrors(nextErrors);
+      return false;
+    }
+
+    const isDeliverable = await verifyEmailDeliverable(form.email);
+    if (isDeliverable === false) {
+      nextErrors.email = "Email is not deliverable";
+    }
+
+    if (!nextErrors.email) {
+      const exists = await checkEmailExists(form.email);
+      if (exists) {
+        nextErrors.email = "Email already exists";
+      }
+    }
+
+    setErrors(nextErrors);
+    return !nextErrors.username && !nextErrors.email && !nextErrors.password;
+  };
+
   const handleSignup = async () => {
-    // 🔴 Empty field check
-    if (!form.username || !form.email || !form.password) {
-      alert("All fields are required");
-      return;
-    }
-
-    // 🔴 Email validation
-    if (!emailRegex.test(form.email)) {
-      alert("Enter a valid email");
-      return;
-    }
-
-    // 🔴 Password validation
-    if (!passwordRegex.test(form.password)) {
-      alert("Password must be at least 6 characters and include a number");
-      return;
-    }
+    const isValid = await validateBeforeSignup();
+    if (!isValid) return;
 
     try {
       const res = await API.post("/api/auth/signup", form);
@@ -240,9 +309,15 @@ function Signup() {
             type="text"
             name="username"
             placeholder="Name"
+            value={form.username}
             onChange={handleChange}
           />
         </div>
+        {errors.username && (
+          <p style={{ color: "#ef4444", fontSize: "12px", margin: "6px 0 10px 0" }}>
+            {errors.username}
+          </p>
+        )}
 
         <div className="input-box">
           <FaEnvelope className="icon" />
@@ -250,9 +325,15 @@ function Signup() {
             type="email"
             name="email"
             placeholder="Email"
+            value={form.email}
             onChange={handleChange}
           />
         </div>
+        {errors.email && (
+          <p style={{ color: "#ef4444", fontSize: "12px", margin: "6px 0 10px 0" }}>
+            {errors.email}
+          </p>
+        )}
 
         <div className="input-box">
           <FaLock className="icon" />
@@ -260,9 +341,15 @@ function Signup() {
             type="password"
             name="password"
             placeholder="Password"
+            value={form.password}
             onChange={handleChange}
           />
         </div>
+        {errors.password && (
+          <p style={{ color: "#ef4444", fontSize: "12px", margin: "6px 0 10px 0" }}>
+            {errors.password}
+          </p>
+        )}
 
         <button className="btn" onClick={handleSignup}>
           Sign Up

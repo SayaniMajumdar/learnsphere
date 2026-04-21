@@ -214,7 +214,7 @@ function Login() {
 
         <div className="divider">or</div>
 
-        <GoogleLoginButton text="Continue with Google" />
+        <GoogleLoginButton text="Login with Google" />
 
         <p>
           Don't have an account?{" "}
